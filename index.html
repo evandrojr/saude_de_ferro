@@ -7,16 +7,11 @@
   <title>Saúde de Ferro</title>
 </head>
 <body ng-controller="mainCtrl">
-
     <h3>Semana atual: {{currentWeek}} </h3>
-  
-  <table border='0' cellpadding='1' cellspacing='1'>
-
-  
+<table border='0' cellpadding='1' cellspacing='1'>
   <thead>
     <tr>
-    <td>semana</td><td>dom</td><td>seg</td><td>ter</td><td>qua</td><td>qui</td><td>sex</td><td>sáb</td><td>total</td><td>peso</td>
-
+    <td>semana</td><td>dom</td><td>seg</td><td>ter</td><td>qua</td><td>qui</td><td>sex</td><td>sáb</td><td>total</td><td>peso</td><td>alterar peso</td>
     </tr>
   </thead>
   <tbody>
@@ -29,35 +24,33 @@
       <td>{{r.thursday}}</td>               
       <td>{{r.friday}}</td>                      
       <td>{{r.saturday}}</td>               
-      <td>{{r.total}}</td>   
-      <td>{{r.weight}}</td>               
+      <td>{{r.total}}</td> 
+      <td>{{r.weight}}</td>       
+      <td><input type="number" ng-model="weightInput[week]" ng-change="setWeight()" width="3" size="3"></td>               
     </tr>   
   </tbody>
  </table>   
-Semana <input type="text" ng-model="weekInput" value="{{weekNumber}}"></br>  
-Dia da semana <input type="text" ng-model="dayOfWeekInput"></br>
+Semana <input type="number" ng-model="weekInput" value="{{weekNumber}}"></br>  
+Dia da semana <input type="number" ng-model="dayOfWeekInput"></br>
 Atividade <select id="TaskSelector" ng-model="TaskSelector" ng-change="setPointsInput()" >
       <option ng-repeat="task in tasks" value="{{task.id}}">{{task.descr}}</option>
     </select>
 </br>  
-Quantidade <input type="text" ng-model="amountInput" ng-change="setPointsInput()"><BR/>
-Pontos <input type="text" ng-model="pointsInput" readonly=true><BR/>
-    <button ng-click="addTask()" >
-      Adicionar tarefa
-    </button> 
+Quantidade <input type="number" ng-model="amountInput" ng-change="setPointsInput()"><BR/>
+Pontos <input type="number" ng-model="pointsInput" readonly=true><BR/>
 
+    <button ng-click="addTask()" >
+      Guardar
+    </button> 
     <button ng-click="clearData()" >
       Limpar memória
     </button> 
-
-    <!-- <button ng-click="saveData()" >
+    <button ng-click="saveData()" >
       Salvar na nuvem
-    </button>  -->
-
-    <!-- <button ng-click="loadData()" >
+    </button> 
+    <button ng-click="loadData()" >
       Carregar dados da nuvem
-    </button>  -->
-
+    </button> 
     <button ng-click="renderResults()" >
       Atualizar tela
     </button> 
@@ -104,11 +97,17 @@ angular.module('SaudeDeFerro').controller('mainCtrl', function($scope){
   $scope.dayOfWeekInput = $scope.todayDayOfWeek; 
   $scope.amountInput = 1;
 
+
+  $scope.setWeight = function(){
+    week = $scope.registeredWeeks[this.$index] ;
+    $scope.weekWeight[week]=parseInt(this.weightInput.undefined);
+    console.log($scope.weekWeight);
+  };
   
   $scope.addTask = function(){
    $scope.dayTasks.push({taskId: parseInt($scope.TaskSelector), week: parseInt($scope.weekInput), dayOfWeek: parseInt($scope.dayOfWeekInput), points: parseInt($scope.pointsInput) });
    $scope.renderResults();
-   $scope.saveData();
+   //$scope.saveData();
      //console.log($scope.daySum);
   };
   
@@ -144,7 +143,7 @@ angular.module('SaudeDeFerro').controller('mainCtrl', function($scope){
                       friday: $scope.daySum[week][6],
                       saturday: $scope.daySum[week][7],
                       total: $scope.sumWeek(week),
-                      weigh: $scope.weekWeight[week] 
+                      weight: $scope.weekWeight[week] 
                     }); 
   };
   
@@ -176,9 +175,10 @@ angular.module('SaudeDeFerro').controller('mainCtrl', function($scope){
   };
   
   $scope.saveData = function(){
-    data.set($scope.dayTasks);
+    dataSet={tasks: $scope.dayTasks, weights: $scope.weekWeight};
+    data.set(dataSet);
+    console.log(dataSet);
   };
-
 
   $scope.renderResults = function(){
     $scope.dayTasks.sort(compareDayTask);
@@ -193,7 +193,10 @@ angular.module('SaudeDeFerro').controller('mainCtrl', function($scope){
   
   $scope.loadData = function(){
       data.once("value", function(snapshot) {
-        $scope.dayTasks = snapshot.val();
+        dataSet=snapshot.val();
+        $scope.dayTasks = dataSet.tasks;
+        $scope.weekWeight = dataSet.weights; 
+        console.log(dataSet);
         alert("Dados carregados, clique em 'Atualizar tela'");
         $scope.renderResults();
       }, function (err){
@@ -201,7 +204,7 @@ angular.module('SaudeDeFerro').controller('mainCtrl', function($scope){
       });
   };
   
-  $scope.loadData();
+  //$scope.loadData();
 });
 
 function compareDayTask(a,b) {
