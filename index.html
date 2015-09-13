@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html ng-app="SaudeDeFerro">
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.0/angular.js"></script>
+<script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>  
+  <meta charset="utf-8">
+  <title>Saúde de Ferro</title>
+</head>
+<body ng-controller="mainCtrl">
+
+    <h3>Semana atual: {{currentWeek}} </h3>
+  
+  <table border='0' cellpadding='1' cellspacing='1'>
+
+  
+  <thead>
+    <tr>
+    <td>semana</td><td>dom</td><td>seg</td><td>ter</td><td>qua</td><td>qui</td><td>sex</td><td>sáb</td><td>total</td><td>peso</td>
+
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="r in rows">
+      <td>{{r.week}}</td>
+      <td>{{r.sunday}}</td>
+      <td>{{r.monday}}</td>
+      <td>{{r.tuesday}}</td>      
+      <td>{{r.wednesday}}</td>            
+      <td>{{r.thursday}}</td>               
+      <td>{{r.friday}}</td>                      
+      <td>{{r.saturday}}</td>               
+      <td>{{r.total}}</td>   
+      <td>{{r.weight}}</td>               
+    </tr>   
+  </tbody>
+ </table>   
+  
+Semana <input type="text" ng-model="weekInput" value="{{weekNumber}}"></br>  
+Dia da semana:<input type="text" ng-model="dayOfWeekInput"></br>
+
+Atividade:  <select id="TaskSelector" ng-model="TaskSelector" ng-change="setPointsInput()" >
+      <option ng-repeat="task in tasks" value="{{task.id}}">{{task.descr}}</option>
+    </select>
+</br>  
+
+  Quantidade<input type="text" ng-model="amountInput" ng-change="setPointsInput()"><BR/>
+  Pontos<input type="text" ng-model="pointsInput" readonly=true><BR/>
+
+    <button ng-click="addTask()" >
+      Adicionar tarefa
+    </button> 
+
+    <button ng-click="clearData()" >
+      Limpar memória
+    </button> 
+
+    <button ng-click="saveData()" >
+      Salvar na nuvem
+    </button> 
+
+    <button ng-click="loadData()" >
+      Carrgar dados da nuvem
+    </button> 
+
+
+  
+<script id="jsbin-javascript">
+var data = new Firebase('https://radiant-torch-5597.firebaseio.com/');
+angular.module('SaudeDeFerro', []);
+angular.module('SaudeDeFerro').controller('mainCtrl', function($scope){
+      
+  $scope.tasks=[
+    {descr: 'Prato 50% verdura', points: 2},
+    {descr: 'Ir academia', points: 2},
+    {descr: 'Cama < 22:30hs', points: 2},
+    {descr: 'Beber 600ml cerveja', points: -2}  
+  ];
+
+  //Initializes the ids
+  var id = -1;
+  $scope.tasks.forEach(function (element) {
+    element.id = ++id;
+  });
+  $scope.currentWeek = getWeekNumber();
+  $scope.weekInput = $scope.currentWeek;
+  //{taskId:,  week:, dayOfWeek:, points:}
+  $scope.dayTasks = [];
+  $scope.daySum = [];
+  $scope.weekWeight = [];
+  $scope.registeredWeeks = [];
+ 
+// $scope.daySum[week][dayOfWeek] = points
+
+  $scope.today = new Date();
+  $scope.todayDayOfWeek =  ($scope.today.getDay() + 1) % 7;
+  $scope.dayOfWeekInput = $scope.todayDayOfWeek; 
+  $scope.amountInput = 1;
+  
+  $scope.addTask = function(){
+   $scope.dayTasks.push({taskId: parseInt($scope.TaskSelector), week: parseInt($scope.weekInput), dayOfWeek: parseInt($scope.dayOfWeekInput), points: parseInt($scope.pointsInput) });
+     $scope.renderResults();
+     //console.log($scope.daySum);
+  };
+  
+  $scope.clearData = function(){
+    $scope.dayTasks = [];
+    $scope.daySum = [];
+    $scope.registeredWeeks = [];
+  };
+  
+  $scope.setPointsInput = function(){
+    console.log($scope.TaskSelector);
+    $scope.pointsInput = $scope.amountInput * $scope.tasks[$scope.TaskSelector].points; 
+  };
+ 
+ 
+  $scope.sumWeek = function(week){
+    sum = 0;  
+    for (var i = 1; i <= 7; i++){
+      if($scope.daySum[week]!==undefined && $scope.daySum[week][i]!==undefined)
+        sum+=$scope.daySum[week][i];
+    }
+    return sum;
+  };
+  
+  
+  $scope.renderWeek = function(week){
+    $scope.rows.push({week: week, 
+                      sunday: $scope.daySum[week][1],
+                      monday: $scope.daySum[week][2],
+                      tuesday: $scope.daySum[week][3],
+                      wednesday: $scope.daySum[week][4],
+                      thursday: $scope.daySum[week][5],
+                      friday: $scope.daySum[week][6],
+                      saturday: $scope.daySum[week][7],
+                      total: $scope.sumWeek(week),
+                      weigh: $scope.weekWeight[week] 
+                    }); 
+  };
+  
+  $scope.setDaySum = function(){
+    $scope.daySum = [];
+    console.log($scope.dayTasks);
+    for (var j = 0; j < $scope.dayTasks.length; j++){
+      i=$scope.dayTasks[j];
+      if($scope.daySum[i.week] === undefined)
+        $scope.daySum[i.week]=[];
+      if($scope.daySum[i.week][i.dayOfWeek] === undefined)
+        $scope.daySum[i.week][i.dayOfWeek]=0;
+      $scope.daySum[i.week][i.dayOfWeek]+=i.points;
+      console.log($scope.daySum[i.week][i.dayOfWeek]);
+     }
+    console.log($scope.daySum);
+  };
+  
+  $scope.setRegisteredWeeks = function(){
+    $scope.registeredWeeks = [];
+    lastWeek=-1;
+    for (var j = 0; j < $scope.dayTasks.length; j++){
+      i=$scope.dayTasks[j];
+      if(lastWeek!=i.week){
+        $scope.registeredWeeks.push(i.week);
+      }
+      lastWeek=i.week;
+    }
+  };
+  
+  $scope.saveData = function(){
+    data.set($scope.dayTasks);
+  };
+  
+  $scope.loadData = function(){
+    
+      data.once("value", function(snapshot) {
+        $scope.dayTasks = snapshot.val();
+
+      });
+    console.log($scope.dayTasks);
+    
+    $scope.renderResults();
+  };
+  
+  
+  $scope.renderResults = function(){
+    $scope.dayTasks.sort(compareDayTask);
+    $scope.setDaySum();
+    $scope.setRegisteredWeeks();
+    $scope.rows = [];
+    console.log($scope.registeredWeeks);
+    for(var i=0; i < $scope.registeredWeeks.length; ++i){
+       $scope.renderWeek($scope.registeredWeeks[i]);
+    }
+  };
+  
+});
+
+function compareDayTask(a,b) {
+  if (a.week < b.week)
+    return -1;
+  if (a.week > b.week)
+    return 1;
+  if(a.dayOfWeek < b.dayOfweek)
+     return -1;
+  if(a.dayOfWeek > b.dayOfweek)
+     return 1;
+  return 0;
+}
+
+function getWeekNumber() {
+    // Copy date so don't modify original
+    var d = new Date();
+    d.setHours(0,0,0);
+    // Set to nearest Thursday: current date + 4 - current day number
+    // Make Sunday's day number 7
+    d.setDate(d.getDate() + 4 - (d.getDay()||7));
+    // Get first day of year
+    var yearStart = new Date(d.getFullYear(),0,1);
+    // Calculate full weeks to nearest Thursday
+    var weekNo = Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
+    // Return array of year and week number
+    return weekNo;
+}
+</script>
+</body>
+</html>
