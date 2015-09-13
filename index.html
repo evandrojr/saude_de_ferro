@@ -101,13 +101,14 @@ angular.module('SaudeDeFerro').controller('mainCtrl', function($scope){
   $scope.setWeight = function(){
     week = $scope.registeredWeeks[this.$index] ;
     $scope.weekWeight[week]=parseInt(this.weightInput.undefined);
+    $scope.saveData();
     console.log($scope.weekWeight);
   };
   
   $scope.addTask = function(){
    $scope.dayTasks.push({taskId: parseInt($scope.TaskSelector), week: parseInt($scope.weekInput), dayOfWeek: parseInt($scope.dayOfWeekInput), points: parseInt($scope.pointsInput) });
    $scope.renderResults();
-   //$scope.saveData();
+   $scope.saveData();
      //console.log($scope.daySum);
   };
   
@@ -204,7 +205,7 @@ angular.module('SaudeDeFerro').controller('mainCtrl', function($scope){
       });
   };
   
-  //$scope.loadData();
+  $scope.loadData();
 });
 
 function compareDayTask(a,b) {
