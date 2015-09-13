@@ -34,18 +34,14 @@
     </tr>   
   </tbody>
  </table>   
-  
 Semana <input type="text" ng-model="weekInput" value="{{weekNumber}}"></br>  
-Dia da semana:<input type="text" ng-model="dayOfWeekInput"></br>
-
-Atividade:  <select id="TaskSelector" ng-model="TaskSelector" ng-change="setPointsInput()" >
+Dia da semana <input type="text" ng-model="dayOfWeekInput"></br>
+Atividade <select id="TaskSelector" ng-model="TaskSelector" ng-change="setPointsInput()" >
       <option ng-repeat="task in tasks" value="{{task.id}}">{{task.descr}}</option>
     </select>
 </br>  
-
-  Quantidade<input type="text" ng-model="amountInput" ng-change="setPointsInput()"><BR/>
-  Pontos<input type="text" ng-model="pointsInput" readonly=true><BR/>
-
+Quantidade <input type="text" ng-model="amountInput" ng-change="setPointsInput()"><BR/>
+Pontos <input type="text" ng-model="pointsInput" readonly=true><BR/>
     <button ng-click="addTask()" >
       Adicionar tarefa
     </button> 
@@ -54,15 +50,17 @@ Atividade:  <select id="TaskSelector" ng-model="TaskSelector" ng-change="setPoin
       Limpar memória
     </button> 
 
-    <button ng-click="saveData()" >
+    <!-- <button ng-click="saveData()" >
       Salvar na nuvem
+    </button>  -->
+
+    <!-- <button ng-click="loadData()" >
+      Carregar dados da nuvem
+    </button>  -->
+
+    <button ng-click="renderResults()" >
+      Atualizar tela
     </button> 
-
-    <button ng-click="loadData()" >
-      Carrgar dados da nuvem
-    </button> 
-
-
   
 <script id="jsbin-javascript">
 var data = new Firebase('https://radiant-torch-5597.firebaseio.com/');
@@ -71,9 +69,19 @@ angular.module('SaudeDeFerro').controller('mainCtrl', function($scope){
       
   $scope.tasks=[
     {descr: 'Prato 50% verdura', points: 2},
-    {descr: 'Ir academia', points: 2},
+    {descr: 'Ir para academia', points: 2},
     {descr: 'Cama < 22:30hs', points: 2},
-    {descr: 'Beber 600ml cerveja', points: -2}  
+    {descr: 'comer < 500g', points: 2},
+    {descr: 'Escovar dentes 3x dia', points: 1},
+    {descr: 'Merendar frutras', points: 2},
+    {descr: 'Ir de bike para o trabalho', points: 2},
+    {descr: 'Usar programa do sono', points: 2},     
+    {descr: 'Tomar suco detox', points: 2},     
+    {descr: 'comer > 600g', points: -2},     
+    {descr: 'Merendar carboidrato', points: -2},     
+    {descr: 'Dormir < 7hs', points: -1},     
+    {descr: 'Carboidrato depois 18hs', points: -3},     
+    {descr: 'Beber 600ml de cerveja', points: -2}  
   ];
 
   //Initializes the ids
@@ -95,10 +103,12 @@ angular.module('SaudeDeFerro').controller('mainCtrl', function($scope){
   $scope.todayDayOfWeek =  ($scope.today.getDay() + 1) % 7;
   $scope.dayOfWeekInput = $scope.todayDayOfWeek; 
   $scope.amountInput = 1;
+
   
   $scope.addTask = function(){
    $scope.dayTasks.push({taskId: parseInt($scope.TaskSelector), week: parseInt($scope.weekInput), dayOfWeek: parseInt($scope.dayOfWeekInput), points: parseInt($scope.pointsInput) });
-     $scope.renderResults();
+   $scope.renderResults();
+   $scope.saveData();
      //console.log($scope.daySum);
   };
   
@@ -142,7 +152,7 @@ angular.module('SaudeDeFerro').controller('mainCtrl', function($scope){
     $scope.daySum = [];
     console.log($scope.dayTasks);
     for (var j = 0; j < $scope.dayTasks.length; j++){
-      i=$scope.dayTasks[j];
+      i = $scope.dayTasks[j];
       if($scope.daySum[i.week] === undefined)
         $scope.daySum[i.week]=[];
       if($scope.daySum[i.week][i.dayOfWeek] === undefined)
@@ -168,19 +178,8 @@ angular.module('SaudeDeFerro').controller('mainCtrl', function($scope){
   $scope.saveData = function(){
     data.set($scope.dayTasks);
   };
-  
-  $scope.loadData = function(){
-    
-      data.once("value", function(snapshot) {
-        $scope.dayTasks = snapshot.val();
 
-      });
-    console.log($scope.dayTasks);
-    
-    $scope.renderResults();
-  };
-  
-  
+
   $scope.renderResults = function(){
     $scope.dayTasks.sort(compareDayTask);
     $scope.setDaySum();
@@ -192,6 +191,17 @@ angular.module('SaudeDeFerro').controller('mainCtrl', function($scope){
     }
   };
   
+  $scope.loadData = function(){
+      data.once("value", function(snapshot) {
+        $scope.dayTasks = snapshot.val();
+        alert("Dados carregados, clique em 'Atualizar tela'");
+        $scope.renderResults();
+      }, function (err){
+        alert("Erro carregando dados da nuvem");
+      });
+  };
+  
+  $scope.loadData();
 });
 
 function compareDayTask(a,b) {
