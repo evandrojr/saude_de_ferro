@@ -159,6 +159,10 @@ angular.module('SaudeDeFerro').controller('mainCtrl', function($scope){
       });
   };
 
+  $scope.mainTableMouseOver = function(){
+    console.log(event.currentTarget.attributes['data-week'].value);
+  }
+
   $scope.loadData();
 });
 

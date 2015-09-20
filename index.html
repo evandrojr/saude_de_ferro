@@ -23,13 +23,13 @@
     <tbody>
       <tr ng-repeat="r in rows">
         <td>{{r.week}}</td>
-        <td>{{r.monday}}</td>
-        <td>{{r.tuesday}}</td>
-        <td>{{r.wednesday}}</td>
-        <td>{{r.thursday}}</td>
-        <td>{{r.friday}}</td>
-        <td>{{r.saturday}}</td>
-        <td>{{r.sunday}}</td>
+        <td ng-mouseover="mainTableMouseOver($event)" data-week={{r.week}} data-day='1'>{{r.monday}}</td>
+        <td ng-mouseover="mainTableMouseOver($event)" data-week={{r.week}} data-day='2'>{{r.tuesday}}</td>
+        <td ng-mouseover="mainTableMouseOver($event)" data-week={{r.week}} data-day='3'>{{r.wednesday}}</td>
+        <td ng-mouseover="mainTableMouseOver($event)" data-week={{r.week}} data-day='4'>{{r.thursday}}</td>
+        <td ng-mouseover="mainTableMouseOver($event)" data-week={{r.week}} data-day='5'>{{r.friday}}</td>
+        <td ng-mouseover="mainTableMouseOver($event)" data-week={{r.week}} data-day='6'>{{r.saturday}}</td>
+        <td ng-mouseover="mainTableMouseOver($event)" data-week={{r.week}} data-day='7'>{{r.sunday}}</td>
         <td>{{r.total}}</td>
         <td>{{r.weight}}</td>
         <td><input type="number" ng-model="weightInput[r.week]" ng-change="setWeight()" width="3" size="3"></td>
