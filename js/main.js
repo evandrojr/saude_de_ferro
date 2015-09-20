@@ -24,8 +24,8 @@ angular.module('SaudeDeFerro').controller('mainCtrl', function($scope){
     {descr: 'Não beber de segunda a quinta +50', points: 50},
     {descr: 'Não beber por um dia no fds +30', points: 30},
   ];
-
-  $scope.WeekDayInput = [
+  $scope.dayOfWeekInput = {};
+  $scope.dayOfWeekInput.weekDaysArr = [
       { id: 1, name: 'Segunda' },
       { id: 2, name: 'Terça' },
       { id: 3, name: 'Quarta' },
@@ -34,6 +34,7 @@ angular.module('SaudeDeFerro').controller('mainCtrl', function($scope){
       { id: 6, name: 'Sábado' },
       { id: 7, name: 'Domingo' },
   ];
+
   //Initializes the ids for the tasks
   var id = -1;
   $scope.tasks.forEach(function (element) {
@@ -48,9 +49,10 @@ angular.module('SaudeDeFerro').controller('mainCtrl', function($scope){
   $scope.registeredWeeks = [];
   $scope.today = new Date();
   $scope.todayDayOfWeek =  ( (($scope.today.getDay() + 6) % 7 ) + 1) ; //monday = 1, sunday = 7
-  $scope.dayOfWeekInput = $scope.todayDayOfWeek;
+//  $scope.dayOfWeekInput = $scope.todayDayOfWeek;
+//  $scope.dayOfWeekInput.weekDays = $scope.dayOfWeekInput.weekDaysArr[$scope.todayDayOfWeek].value;
+  $scope.dayOfWeekInput.weekDays = $scope.todayDayOfWeek;
   $scope.amountInput = 1;
-
   $scope.setWeight = function(){
     week = $scope.registeredWeeks[this.$index] ;
     $scope.weekWeight[week]=parseInt(this.weightInput[week]);
@@ -59,7 +61,7 @@ angular.module('SaudeDeFerro').controller('mainCtrl', function($scope){
   };
 
   $scope.addTask = function(){
-   $scope.dayTasks.push({taskId: parseInt($scope.TaskSelector), week: parseInt($scope.weekInput), dayOfWeek: parseInt($scope.dayOfWeekInput), points: parseInt($scope.pointsInput) });
+   $scope.dayTasks.push({taskId: parseInt($scope.TaskSelector), week: parseInt($scope.weekInput), dayOfWeek: parseInt($scope.dayOfWeekInput.weekDays), points: parseInt($scope.pointsInput) });
    $scope.renderResults();
    $scope.saveData();
   };
