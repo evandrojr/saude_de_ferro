@@ -56,9 +56,9 @@
   <div class="form-group">
     <label class="control-label col-sm-2" for="dayOfWeekInput">Atividade:</label>
     <div class="col-sm-10">
-      <select id="TaskSelector" size="10" ng-model="TaskSelector" ng-change="setPointsInput()" >
+      <select id="TaskSelector" size="15" ng-model="TaskSelector" ng-change="setPointsInput()" >
            <option ng-repeat="task in tasks" value="{{task.id}}">{{task.descr}}</option>
-         </select>
+      </select>
     </div>
   </div>
 

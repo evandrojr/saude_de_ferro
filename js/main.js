@@ -5,27 +5,36 @@ angular.module('SaudeDeFerro').controller('mainCtrl', function($scope){
   // Add new tasks to the end
   // Do not change the order since it task has a hidden id value
   $scope.tasks=[
-    {descr: 'Prato 50% verdura', points: 2},
-    {descr: 'Ir para academia', points: 2},
-    {descr: 'Cama < 22:30hs', points: 2},
-    {descr: 'comer < 500g', points: 2},
-    {descr: 'Escovar dentes 3x dia', points: 1},
-    {descr: 'Merendar frutras', points: 2},
-    {descr: 'Ir de bike para o trabalho', points: 2},
-    {descr: 'Usar programa do sono', points: 2},
-    {descr: 'Tomar suco detox', points: 2},
-    {descr: 'comer > 600g', points: -2},
-    {descr: 'Merendar carboidrato', points: -2},
-    {descr: 'Dormir < 7hs', points: -1},
-    {descr: 'Carboidrato depois 18hs', points: -3},
-    {descr: 'Beber 600ml de cerveja', points: -2},
-    {descr: 'Beber durante a semana', points: -10},
-    {descr: 'Ficar sem beber durante um final de semana', points: 100},
-    {descr: 'Ficar sem beber de segunda a sexta', points: 50},
-    {descr: 'Ficar sem beber durante um dia do final de semana', points: 30},
+    {descr: 'Prato 50% verdura +2', points: 2},
+    {descr: 'Ir para academia +2', points: 2},
+    {descr: 'Cama < 22:30hs +2', points: 2},
+    {descr: 'comer < 500g +2', points: 2},
+    {descr: 'Escovar dentes 3x dia +1', points: 1},
+    {descr: 'Merendar frutras +2', points: 2},
+    {descr: 'Ir de bike para o trabalho +2', points: 2},
+    {descr: 'Usar programa do sono +2', points: 2},
+    {descr: 'Tomar suco detox +2', points: 2},
+    {descr: 'comer > 600g -2', points: -2},
+    {descr: 'Merendar carboidrato -2', points: -2},
+    {descr: 'Dormir < 7hs -3', points: -3},
+    {descr: 'Carboidrato depois 18hs -3', points: -3},
+    {descr: 'Beber 600ml de cerveja -2', points: -2},
+    {descr: 'Beber durante a semana -10', points: -10},
+    {descr: 'Fds inteiro sem beber (sex-dom) +100', points: 100},
+    {descr: 'Não beber de segunda a quinta +50', points: 50},
+    {descr: 'Não beber por um dia no fds +30', points: 30},
   ];
 
-  //Initializes the ids
+  $scope.WeekDayInput = [
+      { id: 1, name: 'Segunda' },
+      { id: 2, name: 'Terça' },
+      { id: 3, name: 'Quarta' },
+      { id: 4, name: 'Quinta' },
+      { id: 5, name: 'Sexta' },
+      { id: 6, name: 'Sábado' },
+      { id: 7, name: 'Domingo' },
+  ];
+  //Initializes the ids for the tasks
   var id = -1;
   $scope.tasks.forEach(function (element) {
     element.id = ++id;
@@ -37,12 +46,6 @@ angular.module('SaudeDeFerro').controller('mainCtrl', function($scope){
   $scope.daySum = [];
   $scope.weekWeight = [];
   $scope.registeredWeeks = [];
-
-// $scope.daySum[week][dayOfWeek] = points
-
-// monday = 1  ()
-//
-
   $scope.today = new Date();
   $scope.todayDayOfWeek =  ( (($scope.today.getDay() + 6) % 7 ) + 1) ; //monday = 1, sunday = 7
   $scope.dayOfWeekInput = $scope.todayDayOfWeek;
