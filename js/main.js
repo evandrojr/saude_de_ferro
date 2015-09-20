@@ -152,7 +152,7 @@ angular.module('SaudeDeFerro').controller('mainCtrl', function($scope){
         $scope.dayTasks = dataSet.tasks;
         $scope.weekWeight = dataSet.weights;
         console.log(dataSet);
-        $scope.messages = JSON.stringify(dataSet);
+        // $scope.messages = JSON.stringify(dataSet);
         $scope.renderResults();
       }, function (err){
         alert("Erro carregando dados da nuvem");
