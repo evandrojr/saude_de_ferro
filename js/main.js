@@ -2,6 +2,8 @@ var data = new Firebase('https://radiant-torch-5597.firebaseio.com/');
 angular.module('SaudeDeFerro', []);
 angular.module('SaudeDeFerro').controller('mainCtrl', function($scope){
 
+  // Add new tasks to the end
+  // Do not change the order since it task has a hidden id value
   $scope.tasks=[
     {descr: 'Prato 50% verdura', points: 2},
     {descr: 'Ir para academia', points: 2},
@@ -16,7 +18,11 @@ angular.module('SaudeDeFerro').controller('mainCtrl', function($scope){
     {descr: 'Merendar carboidrato', points: -2},
     {descr: 'Dormir < 7hs', points: -1},
     {descr: 'Carboidrato depois 18hs', points: -3},
-    {descr: 'Beber 600ml de cerveja', points: -2}
+    {descr: 'Beber 600ml de cerveja', points: -2},
+    {descr: 'Beber durante a semana', points: -10},
+    {descr: 'Ficar sem beber durante um final de semana', points: 100},
+    {descr: 'Ficar sem beber de segunda a sexta', points: 50},
+    {descr: 'Ficar sem beber durante um dia do final de semana', points: 30},
   ];
 
   //Initializes the ids
@@ -34,11 +40,13 @@ angular.module('SaudeDeFerro').controller('mainCtrl', function($scope){
 
 // $scope.daySum[week][dayOfWeek] = points
 
+// monday = 1  ()
+//
+
   $scope.today = new Date();
-  $scope.todayDayOfWeek =  ($scope.today.getDay() + 1) % 7;
+  $scope.todayDayOfWeek =  ( (($scope.today.getDay() + 6) % 7 ) + 1) ; //monday = 1, sunday = 7
   $scope.dayOfWeekInput = $scope.todayDayOfWeek;
   $scope.amountInput = 1;
-
 
   $scope.setWeight = function(){
     week = $scope.registeredWeeks[this.$index] ;
@@ -77,13 +85,13 @@ angular.module('SaudeDeFerro').controller('mainCtrl', function($scope){
 
   $scope.renderWeek = function(week){
     $scope.rows.push({week: week,
-                      sunday: $scope.daySum[week][1],
-                      monday: $scope.daySum[week][2],
-                      tuesday: $scope.daySum[week][3],
-                      wednesday: $scope.daySum[week][4],
-                      thursday: $scope.daySum[week][5],
-                      friday: $scope.daySum[week][6],
-                      saturday: $scope.daySum[week][7],
+                      monday: $scope.daySum[week][1],
+                      tuesday: $scope.daySum[week][2],
+                      wednesday: $scope.daySum[week][3],
+                      thursday: $scope.daySum[week][4],
+                      friday: $scope.daySum[week][5],
+                      saturday: $scope.daySum[week][6],
+                      sunday: $scope.daySum[week][7],
                       total: $scope.sumWeek(week),
                       weight: $scope.weekWeight[week]
                     });
@@ -139,7 +147,7 @@ angular.module('SaudeDeFerro').controller('mainCtrl', function($scope){
         $scope.dayTasks = dataSet.tasks;
         $scope.weekWeight = dataSet.weights;
         console.log(dataSet);
-        alert("Dados carregados, clique em 'Atualizar tela'");
+        $scope.messages = JSON.stringify(dataSet);
         $scope.renderResults();
       }, function (err){
         alert("Erro carregando dados da nuvem");
