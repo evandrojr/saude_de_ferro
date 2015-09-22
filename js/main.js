@@ -23,6 +23,7 @@ angular.module('SaudeDeFerro').controller('mainCtrl', function($scope){
     {descr: 'Fds inteiro sem beber (sex-dom) +100', points: 100},
     {descr: 'Não beber de segunda a quinta +50', points: 50},
     {descr: 'Não beber por um dia no fds +30', points: 30},
+    {descr: 'Fazer a ficha completa da academia +10, points: 10},
   ];
   $scope.dayOfWeekInput = {};
   $scope.dayOfWeekInput.weekDaysArr = [
