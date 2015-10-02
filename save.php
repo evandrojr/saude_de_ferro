@@ -1,10 +1,6 @@
 <?php
-
 echo $HTTP_RAW_POST_DATA;
-$d = json_decode($HTTP_RAW_POST_DATA);
-
 $today = date("Y-m-d");
-file_put_contents("./backup_data/$file.json", $d);
-
-
+$r = file_put_contents("/www/saude/backup_data/$today.json", $HTTP_RAW_POST_DATA);
+echo $r;
 ?>
