@@ -1,6 +1,6 @@
 var data = new Firebase('https://radiant-torch-5597.firebaseio.com/');
 angular.module('SaudeDeFerro', []);
-angular.module('SaudeDeFerro').controller('mainCtrl', function($scope){
+angular.module('SaudeDeFerro').controller('mainCtrl', function($scope, $http){
 
   // Add new tasks to the end
   // Do not change the order since it task has a hidden id value
@@ -132,6 +132,7 @@ angular.module('SaudeDeFerro').controller('mainCtrl', function($scope){
   };
 
   $scope.saveData = function(){
+    $scope.localBackup();
     dataSet={tasks: $scope.dayTasks, weights: $scope.weekWeight};
     data.set(dataSet);
     console.log(dataSet);
@@ -166,6 +167,18 @@ angular.module('SaudeDeFerro').controller('mainCtrl', function($scope){
   }
 
   $scope.loadData();
+
+  $scope.localBackup = function(){
+    dataSet={tasks: $scope.dayTasks, weights: $scope.weekWeight};
+    var res = $http.post('http://evandro.org/saude/save.php', dataSet);
+    res.success(function(data, status, headers, config) {
+      $scope.message = data;
+    });
+    res.error(function(data, status, headers, config) {
+      alert( "failure message: " + JSON.stringify({data: data}));
+    });
+  }
+
 });
 
 function compareDayTask(a,b) {
